@@ -1,4 +1,5 @@
 
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,12 +33,14 @@ public class Frame {
         JProgressBar bar = new JProgressBar(0);
         JButton button = new JButton("Submit Password!");
         JButton button2 = new JButton("Retrieve Password!");
+        JButton button3 = new JButton("Clear Data!");
         JLabel label1 = new JLabel("Press submit to add key to database!");
-        Checkbox one = new Checkbox("one", null, true);
+        Checkbox check = new Checkbox("one", null, true);
         TextField tf1 = new TextField("", 25);
         JTextArea textArea = new JTextArea("**Stored Keys**\n",10, 20);
         JScrollPane scroll = new JScrollPane(textArea);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scroll.setBorder(BorderFactory.createDashedBorder(Color.BLUE));
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setVisible(true);
@@ -47,11 +50,12 @@ public class Frame {
         frame.getContentPane().add(panel);
         frame.getContentPane().add(button);
         frame.getContentPane().add(label1);
-        frame.getContentPane().add(one);
+        frame.getContentPane().add(check);
         frame.getContentPane().add(tf1);
         frame.getContentPane().add(bar);
         frame.getContentPane().add(button2);
         frame.getContentPane().add(scroll);
+        frame.getContentPane().add(button3);
 
         //Method with stored action listener for the button:
         button.addActionListener(new ActionListener() {
@@ -87,6 +91,32 @@ public class Frame {
                     }
                 } catch (Exception ex) {
                     System.out.println("Exception: " + ex);
+                }
+            }
+        });
+
+        button3.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Erasing data..");
+                try {
+                    if (userFile.createNewFile()) {
+                        System.out.println("File created for user!");
+                    } else {
+                        System.out.println("File is already in path!");
+                    }
+                    File file = new File(FILE_NAME);
+                    FileWriter fw = new FileWriter(file);
+                    Scanner fileScan = new Scanner(file);
+                    while (fileScan.hasNextLine()) {
+                        fw.write("");
+                        bar.setValue(0);
+                    }
+                    bar.setValue(100);
+                    textArea.setText("Cleared Database!");
+                    fw.close();
+                } catch (Exception ex) {
+                    System.out.println("Exception caught: " + ex);
                 }
             }
         });
