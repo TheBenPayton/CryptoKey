@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.lang.*;
 import java.awt.*;
 import java.io.*;
+import java.util.Scanner;
 
 public class Frame {
     //This object class contains code for the GUI.
@@ -21,21 +22,30 @@ public class Frame {
     private static final String FILE_NAME = "database.txt";
     private static File userFile = new File(FILE_NAME);
 
+    //MainLoop:
     public static void main(){
         JFrame frame = new JFrame("CryptoKey V1.0");
         JPanel panel = new JPanel(new BorderLayout());
         Container contentPane = frame.getContentPane();
         contentPane.setLayout(new FlowLayout());
+        JProgressBar bar = new JProgressBar(0);
         JButton button = new JButton("Submit Password!");
+        JButton button2 = new JButton("Retrieve Password!");
         JLabel label1 = new JLabel("Press submit to add key to database!");
         Checkbox one = new Checkbox("one", null, true);
-        TextField tf1 = new TextField("", 20);
+        TextField tf1 = new TextField("", 25);
+        JTextArea textArea = new JTextArea();
+        bar.setValue(0);
+        bar.setStringPainted(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().add(panel);
         frame.getContentPane().add(button);
         frame.getContentPane().add(label1);
         frame.getContentPane().add(one);
         frame.getContentPane().add(tf1);
+        frame.getContentPane().add(bar);
+        frame.getContentPane().add(button2);
+        frame.getContentPane().add(textArea);
 
         //Method with stored action listener for the button:
         button.addActionListener(new ActionListener() {
@@ -43,8 +53,35 @@ public class Frame {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Submit button clicked!");
                 String inputValue = tf1.getText();
-                System.out.println("Value is: " + inputValue);
-                Frame.FileManager(inputValue);
+                if (inputValue.isEmpty()){
+                    System.out.println("No input..");
+                    inputValue = null;
+                    bar.setValue(0);
+                } else {
+                    System.out.println("Added Value is: " + inputValue);
+                    Frame.FileManager(inputValue);
+                    bar.setValue(100);
+                }
+            }
+        });
+
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                System.out.println("Retrieving stored keys..");
+                try {
+                    File file = new File(FILE_NAME);
+                    Scanner fscan =  new Scanner(file);
+                    String storedKey;
+                    while(fscan.hasNextLine()) {
+                        storedKey = fscan.nextLine();
+                        textArea.append("Key Retrieved: " + storedKey + "\n");
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Exception: " + ex);
+                }
+
             }
         });
 
@@ -63,13 +100,10 @@ public class Frame {
             } else {
                 System.out.println("File is already in path!");
             }
-            FileReader fr = new FileReader(FILE_NAME);
             FileWriter fw = new FileWriter(FILE_NAME, true);
 
             fw.write(key + "\n");
             fw.close();
-            fr.close();
-
         } catch (Exception ex) {
             System.out.println("Exception has occurred: " + ex);
         }
