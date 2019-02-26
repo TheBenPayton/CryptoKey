@@ -80,6 +80,7 @@ public class Frame {
                     File file = new File(FILE_NAME);
                     Scanner fscan =  new Scanner(file);
                     String storedKey;
+                    textArea.setText("**Stored Keys**\n");
                     while(fscan.hasNextLine()) {
                         storedKey = fscan.nextLine();
                         textArea.append("Key Retrieved: " + storedKey + "\n");
